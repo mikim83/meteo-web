@@ -232,8 +232,8 @@
       var rect = svgEl('rect', { x: x, y: padT, width: cell, height: cell, rx: 1.5, class: cellClass });
       var titleText;
       if (dayData) {
-        var minTxt = dayData.tmin != null ? ' · mín ' + dayData.tmin.toFixed(1) + '°C' : '';
-        titleText = fmtDate(dateStr) + ': máx ' + dayData.tmax.toFixed(1) + '°C' + minTxt +
+        var minTxt = dayData.tmin != null ? ' · mín ' + dayData.tmin.toFixed(1) + '\u00a0°C' : '';
+        titleText = fmtDate(dateStr) + ': máx ' + dayData.tmax.toFixed(1) + '\u00a0°C' + minTxt +
           (isHeatwave ? ' · 🔥 ola de calor' : ' · sin ola de calor') + ' (' + dayData.source + ')';
       } else {
         titleText = fmtDate(dateStr) + ': sin datos';
@@ -247,7 +247,7 @@
     if (!anyHeatwave) {
       var note = document.createElement('p');
       note.className = 'inc-empty';
-      note.textContent = 'No se han detectado olas de calor (≥3 días seguidos con máxima ≥34°C) en este periodo.';
+      note.textContent = 'No se han detectado olas de calor (≥3 días seguidos con máxima ≥34\u00a0°C) en este periodo.';
       wrap.appendChild(note);
     }
   }

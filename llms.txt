@@ -16,7 +16,7 @@ Zona horaria: Europe/Madrid. Los valores numéricos usan punto decimal. Los dato
   - `pressure`: presión atmosférica, en mbar (hPa). `pressure_trend`: tendencia (Rising Rapidly, Rising Slowly, Steady, Falling Slowly, Falling Rapidly).
   - `rain_rate`: intensidad de lluvia actual, en mm/h. `rain_daily`: lluvia de hoy. `rain_24h`: últimas 24 h. `rain_month`: mes en curso. `rain_year`: año en curso. Todas en mm.
   - `max_temp_24h`, `min_temp_24h`: máxima y mínima exteriores de las últimas 24 h, en °C (números), con la hora en `max_temp_24h_time` y `min_temp_24h_time` (HH:MM).
-- [Página principal](https://meteo.dob-world.com/): la misma información con gráficos de las últimas 24 h, arco solar, fase lunar y previsión. Incluye un resumen en texto con los valores actuales.
+- [Página principal](https://meteo.dob-world.com/): la misma información con gráficos de las últimas 24 h, arco solar, fase lunar y pronóstico. Incluye un resumen en texto con los valores actuales.
 - [index.md](https://meteo.dob-world.com/index.md): la home en Markdown con los valores actuales. También se obtiene pidiendo `https://meteo.dob-world.com/` con la cabecera `Accept: text/markdown`.
 
 ## Histórico
@@ -25,9 +25,9 @@ Zona horaria: Europe/Madrid. Los valores numéricos usan punto decimal. Los dato
 - [historico_2026.json](https://meteo.dob-world.com/historico_2026.json): agregados diarios del año (también historico_2023.json, historico_2024.json, historico_2025.json) y [historico_meta.json](https://meteo.dob-world.com/historico_meta.json): récords y extremos.
 - Lecturas minuto a minuto, un fichero de texto por año, en CSV sin cabecera: [meteo_2026.txt](https://meteo.dob-world.com/meteo_2026.txt), [meteo_2025.txt](https://meteo.dob-world.com/meteo_2025.txt), [meteo_2024.txt](https://meteo.dob-world.com/meteo_2024.txt), [meteo_2023.txt](https://meteo.dob-world.com/meteo_2023.txt). Cada línea empieza por `AAAA-MM-DD HH:MM` y sigue con estas columnas: ext_temp, ext_hum, wind_speed, wind_degree, wind_dir, pressure, int_temp, int_hum, heat_index, dew_point, wind_gust, rain_daily, pressure_trend. Las líneas antiguas tienen menos columnas (2023 y parte de 2024 y 2026 solo llegan hasta algunas de las primeras; las filas recientes tienen las 13). Las columnas siempre mantienen el mismo orden y las que no existían se omiten por el final.
 
-## Previsión
+## Pronóstico
 
-- [forecast.json](https://meteo.dob-world.com/forecast.json): previsión de Cerdanyola del Vallès para los próximos 7 días, combinando AEMET (cielo, probabilidad de lluvia, máximas y mínimas), Météo-France AROME (temperatura y viento de las primeras ~57 h), la media por hora de ECMWF IFS, DWD ICON-EU y AROME para la cantidad de lluvia (`precip`, con los modelos usados en `src.precip`) y Open-Meteo (el resto). Se regenera cada 30 minutos. Estructura (`schema` 1):
+- [forecast.json](https://meteo.dob-world.com/forecast.json): pronóstico de Cerdanyola del Vallès para los próximos 7 días, combinando AEMET (cielo, probabilidad de lluvia, máximas y mínimas), Météo-France AROME (temperatura y viento de las primeras ~57 h), la media por hora de ECMWF IFS, DWD ICON-EU y AROME para la cantidad de lluvia (`precip`, con los modelos usados en `src.precip`) y Open-Meteo (el resto). Se regenera cada 30 minutos. Estructura (`schema` 1):
   - `updated` (ISO 8601 con zona horaria), `timezone` (Europe/Madrid), `units` (unidad de cada campo), `location`, `sources` (qué fuentes respondieron).
   - `summary`: resumen de las próximas 24 h ya calculado: `tmax`/`tmin` con su hora, `precip_mm`, `pop_max`, `rain` (tramos con lluvia: `from`, `to` en horas locales y `mm`), `rain_expected`, `wind_max`, `gust_max`, `uv_max_today`, `sunrise`, `sunset` y `now` (estado de la hora actual).
   - `hours`: una entrada por hora local (`t` hora local sin zona, `ts` segundos Unix): `temp`, `feels`, `hum`, `dew`, `pop` (probabilidad de lluvia, %), `precip` (mm), `wind` y `gust` (km/h), `wind_dir` (rosa de 16 puntos con O de oeste) y `wind_deg`, `pressure`, `cloud`, `uv`, `freezing` (isoterma de 0 °C, m), `is_day`, `sky` y `src` (fuente de la temperatura y del cielo).
