@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://meteo.dob-world.com/sitemap.xml

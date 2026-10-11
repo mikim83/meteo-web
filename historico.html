@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Histórico meteorológico — Meteo Cerdanyola del Vallès</title>
+  <meta name="description" content="Histórico meteorológico de Cerdanyola del Vallès desde junio de 2023: temperaturas mensuales, récords, lluvia acumulada y efemérides.">
+  <meta property="og:title" content="Histórico — Meteo Cerdanyola del Vallès">
+  <meta property="og:description" content="Récords, evolución mensual y efemérides de temperatura, lluvia y presión en Cerdanyola del Vallès.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://meteo.dob-world.com/historico.html">
+  <link rel="canonical" href="https://meteo.dob-world.com/historico.html">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="historico.css?v=20261001b">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet"></noscript>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="theme-toggle-wrap">
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+          <span class="theme-toggle-icon"></span>
+          <span class="theme-toggle-label">Modo oscuro</span>
+        </button>
+      </div>
+      <h1>Histórico meteorológico</h1>
+      <p class="location">Cerdanyola del Vallès · desde junio de 2023</p>
+      <p class="hist-back"><a href="index.html">&larr; Volver al tiempo actual</a></p>
+    </header>
+
+    <main class="main">
+      <section id="hist-onthisday" class="hist-section" hidden>
+        <h2 class="hist-title">Un día como hoy</h2>
+        <div id="hist-onthisday-grid" class="hist-otd-grid"></div>
+      </section>
+
+      <section id="hist-records" class="hist-section" hidden>
+        <h2 class="hist-title">Récords</h2>
+        <div id="hist-records-grid" class="history-grid"></div>
+      </section>
+
+      <section id="hist-extremes" class="hist-section" hidden>
+        <h2 class="hist-title">Rachas y días extremos</h2>
+        <div id="hist-extremes-grid" class="history-grid"></div>
+      </section>
+
+      <section id="hist-heatmap" class="hist-section" hidden>
+        <div class="hist-title-row">
+          <h2 class="hist-title">Calendario de temperaturas</h2>
+          <select id="hist-heatmap-year" class="hist-year-select"></select>
+        </div>
+        <p class="hist-heatmap-subtitle">Temperatura máxima diaria, un mosaico por día</p>
+        <div id="hist-heatmap-chart" class="hist-chart-wrap"></div>
+      </section>
+
+      <section id="hist-monthly" class="hist-section" hidden>
+        <div class="hist-title-row">
+          <h2 class="hist-title">Temperatura mensual (mín / media / máx)</h2>
+          <select id="hist-monthly-year" class="hist-year-select"></select>
+        </div>
+        <div id="hist-monthly-chart" class="hist-chart-wrap"></div>
+      </section>
+
+      <section id="hist-rain" class="hist-section" hidden>
+        <h2 class="hist-title">Lluvia acumulada por mes</h2>
+        <div id="hist-rain-chart" class="hist-chart-wrap"></div>
+      </section>
+
+      <section id="hist-years" class="hist-section" hidden>
+        <h2 class="hist-title">Resumen por año</h2>
+        <div id="hist-years-grid" class="history-grid"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p><a href="index.html">Meteo Cerdanyola en tiempo real</a> · <a href="incendios.html">Incendios</a> · <a href="instrucciones.html">Instrucciones</a></p>
+    </footer>
+  </div>
+  <script src="historico.js?v=20261001b"></script>
+</body>
+</html>

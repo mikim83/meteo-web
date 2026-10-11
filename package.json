@@ -1,0 +1,12 @@
+{
+  "name": "meteo-dob-world",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Build tooling for meteo.dob-world.com (minification only; site is static)",
+  "scripts": {
+    "build": "./build.sh"
+  },
+  "devDependencies": {
+    "terser": "^5.48.0"
+  }
+}

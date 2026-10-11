@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incendios a Catalunya — Meteo Cerdanyola del Vallès</title>
+  <meta name="description" content="Seguimiento de incendios forestales en Catalunya desde el verano de 2026: noticias y mapa de puntos afectados.">
+  <meta property="og:title" content="Incendios a Catalunya — Meteo Cerdanyola del Vallès">
+  <meta property="og:description" content="Noticias y mapa de incendios forestales en Catalunya, verano a verano.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://meteo.dob-world.com/incendios.html">
+  <link rel="canonical" href="https://meteo.dob-world.com/incendios.html">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="historico.css">
+  <link rel="stylesheet" href="incendios.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet"></noscript>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="theme-toggle-wrap">
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+          <span class="theme-toggle-icon"></span>
+          <span class="theme-toggle-label">Modo oscuro</span>
+        </button>
+      </div>
+      <h1>🔥 Incendios a Catalunya</h1>
+      <p class="location">Seguiment des de l'estiu de 2026</p>
+      <p class="hist-back"><a href="index.html">&larr; Volver al tiempo actual</a></p>
+    </header>
+
+    <main class="main">
+      <section id="inc-map-section" class="inc-section">
+        <div class="hist-title-row">
+          <h2 class="hist-title">Mapa de incendios</h2>
+          <select id="inc-year" class="hist-year-select"></select>
+        </div>
+        <div id="inc-map" class="inc-map"></div>
+        <div class="inc-legend">
+          <span class="inc-legend-item"><span class="inc-legend-dot" style="background:#ff3b30"></span>últimas 48h</span>
+          <span class="inc-legend-item"><span class="inc-legend-dot" style="background:#ff8c1a"></span>última semana</span>
+          <span class="inc-legend-item"><span class="inc-legend-dot" style="background:#e8b923"></span>más antiguo</span>
+        </div>
+        <p class="inc-map-note">Ubicaciones aproximadas, estimadas a partir de la noticia. Color según antigüedad de la noticia (no indica si el incendio sigue activo).</p>
+      </section>
+
+      <section id="inc-sources-section" class="inc-section">
+        <h2 class="hist-title">Fuentes de datos</h2>
+        <ul class="inc-sources-list">
+          <li><strong>Bombers de la Generalitat</strong> — dataset oficial de actuaciones (<a href="https://analisi.transparenciacatalunya.cat/resource/g2ay-3vnj.json" target="_blank" rel="noopener">Transparència Catalunya</a>), usado para confirmar municipio y fecha.</li>
+          <li><strong>Prensa</strong> — ACN, La Vanguardia y otros medios, para detalles, ubicación y evolución de cada incendio.</li>
+          <li><strong>EFFIS / Copernicus</strong> — para contexto de incendios en el resto de España y Europa, superficie quemada e índice de riesgo, ver el <a href="https://forest-fire.emergency.copernicus.eu/" target="_blank" rel="noopener">visor oficial de la UE &rarr;</a>.</li>
+        </ul>
+      </section>
+
+      <section id="inc-heatwave-section" class="inc-section">
+        <h2 class="hist-title">Olas de calor del verano</h2>
+        <p class="inc-map-note">Cerdanyola del Vallès · días con máxima ≥34°C durante 3 días consecutivos o más</p>
+        <div id="inc-heatwave-chart" class="hist-chart-wrap"></div>
+      </section>
+
+      <section id="inc-list-section" class="inc-section">
+        <h2 class="hist-title">Noticias</h2>
+        <div id="inc-list" class="news-list inc-list"></div>
+        <p class="news-updated" id="inc-updated"></p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p><a href="index.html">Meteo Cerdanyola en tiempo real</a> · <a href="historico.html">Histórico</a> · <a href="instrucciones.html">Instrucciones</a></p>
+    </footer>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="incendios.js"></script>
+</body>
+</html>

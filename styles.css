@@ -1,0 +1,1560 @@
+/* --- Variables (tema oscuro por defecto) --- */
+:root {
+  --bg: #0f1419;
+  --surface: #1a2332;
+  --surface-hover: #243044;
+  --text: #e8edf4;
+  --text-muted: #8b9cb3;
+  --accent: #3b9b7a;
+  --accent-light: #52c99d;
+  --border: rgba(255, 255, 255, 0.08);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --tooltip-bg: rgba(26, 35, 50, 0.95);
+  --tooltip-border: rgba(255, 255, 255, 0.12);
+}
+
+/* --- Tema claro --- */
+body.theme-light {
+  --bg: #eef1f5;
+  --surface: #ffffff;
+  --surface-hover: #e8ecf1;
+  --text: #1a2332;
+  --text-muted: #5a6578;
+  --border: rgba(0, 0, 0, 0.1);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --tooltip-bg: rgba(255, 255, 255, 0.98);
+  --tooltip-border: rgba(0, 0, 0, 0.15);
+}
+
+body.theme-light .station-error,
+body.theme-light .error {
+  color: #b84a4a;
+  border-color: rgba(180, 70, 70, 0.35);
+}
+
+body.theme-light .theme-toggle {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+body.theme-light .theme-toggle:hover {
+  background: var(--surface-hover);
+}
+
+/* --- Reset y base --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* --- Layout app --- */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 1.25rem;
+  width: 100%;
+}
+
+/* --- Header --- */
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.header h1 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.25rem;
+}
+
+.location {
+  font-size: 1rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.theme-toggle-wrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-family: var(--font);
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.theme-toggle:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.theme-toggle svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  opacity: 0.9;
+}
+
+/* --- Main --- */
+.main {
+  flex: 1;
+}
+
+/* --- Estación local --- */
+.station {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.station-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent-light);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.station-loading,
+.station-error {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.station-error {
+  color: #e8a0a0;
+}
+
+.station-error code {
+  font-size: 0.85em;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+}
+
+.station-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem 1.25rem;
+}
+
+.station-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.station-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.station-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+@media (min-width: 600px) {
+  .station-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .station-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.hist-back {
+  margin-top: 0.5rem;
+}
+
+.hist-back a {
+  color: var(--accent-light);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.hist-back a:hover {
+  text-decoration: underline;
+}
+
+/* --- Histórico de hoy --- */
+.history-section {
+  margin-bottom: 2rem;
+}
+
+.history-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent-light);
+  margin-bottom: 1rem;
+}
+
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.history-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 1rem;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.history-card:hover {
+  border-top-color: var(--accent-light);
+}
+
+.history-card-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.history-card-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.history-chart-wrap {
+  width: 100%;
+  height: 200px;
+  position: relative;
+}
+
+.history-chart-wrap canvas {
+  display: block;
+}
+
+/* --- Error --- */
+.error {
+  background: var(--surface);
+  border: 1px solid rgba(220, 80, 80, 0.3);
+  color: #e8a0a0;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+/* --- Forecast --- */
+/* --- Previsión: pestañas "Próximas horas" / "7 días" --- */
+.forecast {
+  margin-bottom: 2rem;
+}
+
+.forecast-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.forecast-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.forecast-tabs {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.forecast-tab {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.forecast-tab:hover {
+  color: var(--text);
+}
+
+.forecast-tab.is-active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.forecast-tab:focus-visible {
+  outline: 2px solid var(--accent-light);
+  outline-offset: 2px;
+}
+
+.forecast-panel[hidden] {
+  display: none;
+}
+
+.forecast-sources {
+  margin-top: 1rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.fc-lead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.fc-lead-sky {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.fc-lead-emoji {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.fc-lead-temp {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.fc-lead-temp span {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 0.15rem;
+}
+
+.fc-lead-label {
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+
+.fc-lead-text {
+  flex: 1 1 260px;
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.fc-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.fc-stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 0.9rem;
+}
+
+.fc-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fc-stat-value {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+.fc-stat-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+.fc-chart-box {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.fc-chart-box .fc-chart-wrap {
+  margin-bottom: 0;
+}
+
+.fc-chart-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.fc-chart {
+  width: 100%;
+  min-width: 620px;
+  height: auto;
+  min-height: 160px;
+  display: block;
+}
+
+.fc-bar {
+  fill: rgba(80, 160, 255, 0.55);
+}
+
+.fc-bar-label {
+  fill: var(--text-muted);
+  font-size: 9px;
+  font-family: var(--font);
+}
+
+.fc-temp-label {
+  fill: var(--text);
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--font);
+}
+
+.fc-daysep {
+  stroke-dasharray: 3 3;
+  opacity: 0.6;
+}
+
+.fc-table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+.fc-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 900px;
+  font-size: 0.82rem;
+}
+
+.fc-table th,
+.fc-table td {
+  padding: 0.45rem 0.35rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.fc-table thead th {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.fc-table tbody th {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+  text-align: left;
+  padding: 0.45rem 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.76rem;
+  border-right: 1px solid var(--border);
+}
+
+.fc-table tbody tr + tr th,
+.fc-table tbody tr + tr td {
+  border-top: 1px solid var(--border);
+}
+
+.fc-cell-emoji {
+  font-size: 1.35rem;
+}
+
+.fc-cell-temp {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.fc-wet {
+  font-weight: 600;
+}
+
+.fc-muted {
+  color: var(--text-muted);
+}
+
+.fc-arrow {
+  display: block;
+  margin: 0 auto 2px;
+  color: var(--accent-light);
+}
+
+@media (max-width: 700px) {
+  .fc-lead-emoji { font-size: 2.4rem; }
+  .fc-lead-temp { font-size: 2rem; }
+}
+
+/* Gráficos de previsión: temperatura en naranja */
+.fc-chart .chart-line {
+  stroke: #f07828;
+  stroke-width: 2.5;
+}
+
+.fc-chart .chart-dot {
+  fill: #f07828;
+}
+
+/* --- Meteograma de 7 días --- */
+.fc-mg {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem 0.5rem;
+}
+
+.fc-mg-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.4rem;
+}
+
+.fc-mg-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding-left: 0.6rem;
+  border-left: 4px solid #f07828;
+}
+
+.fc-mg-sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding-left: calc(0.6rem + 4px);
+  margin-top: 0.15rem;
+}
+
+.fc-mg-legend {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.fc-mg-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.fc-lg-line {
+  display: inline-block;
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+  background: #f07828;
+}
+
+.fc-lg-bar {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: rgba(80, 160, 255, 0.85);
+}
+
+.fc-mg-hint {
+  display: none;
+  margin: 0.2rem 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 1100px) {
+  .fc-mg-hint {
+    display: block;
+  }
+}
+
+.fc-mg-scroll {
+  overflow-x: auto;
+}
+
+.fc-mg-svg {
+  display: block;
+  width: 100%;
+  min-width: 1000px;
+  height: auto;
+}
+
+.fc-mg-line {
+  stroke: #f07828;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.fc-mg-bar {
+  fill: rgba(80, 160, 255, 0.8);
+}
+
+.fc-mg-daysep {
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+  opacity: 0.55;
+}
+
+.fc-mg-axis-line {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.fc-mg-axis-line--t {
+  stroke: #f07828;
+  opacity: 0.7;
+}
+
+.fc-mg-axis-line--r {
+  stroke: rgba(80, 160, 255, 0.8);
+}
+
+.fc-mg-axis-r {
+  fill: rgba(80, 160, 255, 0.95);
+}
+
+.fc-mg-day {
+  fill: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font);
+}
+
+.fc-mg-daytemps {
+  fill: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font);
+}
+
+.fc-mg-tmax {
+  fill: #f07828;
+  font-weight: 600;
+}
+
+.fc-mg-hit {
+  fill: transparent;
+}
+
+/* Guía vertical y punto del tooltip (los mueve el JavaScript) */
+.fc-mg-cross {
+  display: none;
+  stroke: var(--text);
+  stroke-width: 1;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.fc-mg-mark {
+  display: none;
+  fill: #f07828;
+  stroke: var(--surface);
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+.fc-mg-cross.is-on,
+.fc-mg-mark.is-on,
+.fc-pill.is-on {
+  display: block;
+}
+
+/* Etiqueta con la hora bajo la guía */
+.fc-pill {
+  display: none;
+  pointer-events: none;
+}
+
+.fc-pill rect {
+  fill: #f07828;
+}
+
+.fc-pill text {
+  fill: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font);
+}
+
+/* Columna de la tabla correspondiente a la hora del gráfico */
+.fc-table [data-i].is-hl {
+  box-shadow: inset 0 0 0 9999px rgba(240, 120, 40, 0.18);
+}
+
+.fc-chart .fc-mg-hit {
+  cursor: crosshair;
+}
+
+.fc-tip {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  min-width: 215px;
+  max-width: 270px;
+  padding: 0.65rem 0.8rem;
+  background: var(--tooltip-bg);
+  border: 1px solid var(--tooltip-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  font-size: 0.8rem;
+}
+
+.fc-tip[hidden] {
+  display: none;
+}
+
+.fc-tip-head {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.fc-tip-sky {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.45rem;
+  color: var(--text-muted);
+}
+
+.fc-tip-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.2rem 0.9rem;
+}
+
+.fc-tip-grid > span {
+  color: var(--text-muted);
+}
+
+.fc-tip-grid strong {
+  text-align: right;
+  font-weight: 600;
+}
+
+.fc-tip-grid em {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 0.4rem;
+}
+
+/* En escritorio se lee "Temperatura"; en pantallas estrechas "Temp." */
+.fc-tip-abbr {
+  display: none;
+  font-style: normal;
+}
+
+/* Tooltip compacto en pantallas estrechas: hora, temperatura, lluvia y viento */
+@media (max-width: 700px) {
+  .fc-tip {
+    min-width: 0;
+    max-width: 175px;
+    padding: 0.4rem 0.55rem;
+    font-size: 0.72rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  }
+
+  .fc-tip-head {
+    font-size: 0.78rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .fc-tip-sky,
+  .fc-tip-x,
+  .fc-tip em {
+    display: none;
+  }
+
+  .fc-tip-abbr {
+    display: inline;
+  }
+
+  .fc-tip-full {
+    display: none;
+  }
+
+  .fc-tip-grid {
+    gap: 0.12rem 0.6rem;
+  }
+}
+
+.fc-tip .fc-arrow {
+  display: inline;
+  margin: 0 0.25rem 0 0;
+  vertical-align: -2px;
+}
+
+.fc-ic {
+  overflow: visible;
+}
+
+.fc-ic--sun,
+.fc-ic--cloud_sun { stroke: #f5a623; }
+.fc-ic--moon,
+.fc-ic--cloud_moon { stroke: #8b8bf0; }
+.fc-ic--cloud,
+.fc-ic--fog { stroke: var(--text-muted); }
+.fc-ic--drizzle,
+.fc-ic--rain { stroke: #4a9df0; }
+.fc-ic--thunder { stroke: #b08cf0; }
+.fc-ic--snow { stroke: #5cc8e8; }
+
+/* --- Polen --- */
+.pollen-section {
+  margin-bottom: 2rem;
+}
+
+.pollen-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent-light);
+  margin-bottom: 0.35rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.pollen-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.pollen-error {
+  color: #e8a0a0;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.pollen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.pollen-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.pollen-card-date {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent-light);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.pollen-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.pollen-row:last-child {
+  border-bottom: none;
+}
+
+.pollen-type {
+  color: var(--text-muted);
+}
+
+.pollen-value {
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.pollen-attribution {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+}
+
+.pollen-attribution a {
+  color: var(--accent-light);
+  text-decoration: none;
+}
+
+.pollen-attribution a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 900px) {
+  .pollen-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .pollen-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.chart-grid-line {
+  stroke: var(--border);
+  stroke-width: 0.5;
+}
+
+.chart-axis-label {
+  fill: var(--text-muted);
+  font-size: 10px;
+  font-family: var(--font);
+}
+
+.chart-line {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chart-dot {
+  fill: var(--accent);
+}
+
+/* --- Diagramas externos --- */
+.diagrams-section {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.diagrams-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.diagram-link,
+.diagram-slot {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  min-height: 120px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.diagram-link {
+  display: block;
+  height: 100%;
+  min-height: 0;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.diagram-link:hover {
+  border-color: var(--accent);
+  background: var(--surface-hover);
+}
+
+.diagram-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.diagram-slot {
+  background: var(--surface);
+}
+
+.diagram-iframe-wrap {
+  padding: 0;
+}
+
+.diagram-iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  border: none;
+  display: block;
+}
+
+.diagram-facade {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--surface) linear-gradient(135deg, rgba(91,155,213,0.12), rgba(75,175,138,0.12));
+  transition: background 0.2s;
+}
+
+.diagram-facade:hover,
+.diagram-facade:focus-visible {
+  background: var(--surface-hover) linear-gradient(135deg, rgba(91,155,213,0.18), rgba(75,175,138,0.18));
+}
+
+.diagram-facade-label {
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 0 1rem;
+}
+
+@media (max-width: 600px) {
+  .diagrams-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* El botón de tema es position:absolute (top:0; right:0) sobre un .header
+   centrado — en pantallas estrechas el título largo ("Meteo Cerdanyola -
+   Ateneu") queda debajo del botón y se ve cortado (bug real detectado
+   2026-08-08). Por debajo de 480px lo sacamos del flujo absoluto y lo
+   apilamos encima del título, así nunca se solapan sea cual sea la
+   longitud del texto. */
+@media (max-width: 480px) {
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .theme-toggle-wrap {
+    position: static;
+    order: -1;
+    align-self: flex-end;
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* --- Footer --- */
+.footer {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.footer p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.footer a {
+  color: var(--accent-light);
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* --- Responsive: móvil pequeño --- */
+@media (max-width: 380px) {
+  .app {
+    padding: 1rem;
+  }
+
+}
+
+/* --- Responsive: tablet y desktop --- */
+@media (min-width: 600px) {
+}
+
+@media (min-width: 900px) {
+  .history-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1400px) {
+  .app {
+    padding: 1.25rem 1rem;
+  }
+}
+
+/* ─── Hero ─────────────────────────────────────────────────────────────────── */
+
+.hero {
+  --hero-accent: var(--accent-light);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem 1.5rem 1.25rem;
+  margin-bottom: 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 15% 50%, color-mix(in srgb, var(--hero-accent) 8%, transparent), transparent);
+  pointer-events: none;
+  transition: background 1s ease;
+}
+
+.hero-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.heatwave-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: linear-gradient(90deg, rgba(224, 64, 48, 0.16), rgba(224, 64, 48, 0.04));
+  border: 1px solid rgba(224, 64, 48, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.85rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.heatwave-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.heatwave-text strong {
+  color: #e04030;
+}
+
+.hero-temps {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.hero-ext-temp {
+  font-size: clamp(3rem, 10vw, 5rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  transition: color 1s ease;
+  flex-shrink: 0;
+}
+
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-top: 0.4rem;
+}
+
+.hero-int-temp {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.hero-feels {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.hero-minmax {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.hero-max {
+  color: #e8a060;
+}
+
+.hero-min {
+  color: #60a8e8;
+}
+
+.hero-minmax em {
+  font-style: normal;
+  font-size: 0.85em;
+  opacity: 0.75;
+}
+
+.hero-chips {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+@media (max-width: 500px) {
+  .hero-chips {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.hero-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.82rem;
+}
+
+.hero-chip-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.hero-chip-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.hero-chip-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.hero-chip-value {
+  color: var(--text);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.hero-updated {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  opacity: 0.65;
+  margin-top: 0.1rem;
+}
+
+/* ─── Fila astro + noticias ──────────────────────────────────────────────────── */
+
+.astro-news-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .astro-news-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Panel astronómico ──────────────────────────────────────────────────────── */
+
+.astro-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 580px) {
+  .astro-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+.astro-solar,
+.astro-lunar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1rem 1rem;
+}
+
+.astro-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-light);
+  margin-bottom: 0.75rem;
+}
+
+/* ─── Arco solar SVG ─────────────────────────────────────────────────────────── */
+
+.solar-svg {
+  width: 100%;
+  max-height: 110px;
+  display: block;
+  overflow: visible;
+}
+
+.solar-arc-bg {
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.solar-arc-done {
+  stroke: #f5a623;
+  stroke-width: 3;
+  opacity: 0.85;
+}
+
+.solar-horizon {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.solar-sun {
+  fill: #f5a623;
+}
+
+.solar-sun-glow {
+  fill: #f5a62330;
+}
+
+.solar-sun-down {
+  fill: var(--text-muted);
+  opacity: 0.4;
+}
+
+.solar-label {
+  font-family: var(--font);
+  font-size: 10px;
+  fill: var(--text-muted);
+}
+
+.solar-label-rise {
+  text-anchor: start;
+}
+
+.solar-label-set {
+  text-anchor: end;
+}
+
+.solar-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+.solar-info strong {
+  color: var(--text);
+}
+
+/* ─── Fase lunar ──────────────────────────────────────────────────────────────── */
+
+.astro-lunar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.25rem;
+}
+
+.lunar-emoji {
+  font-size: 5rem;
+  line-height: 1;
+  margin: 0.5rem 0 0.25rem;
+}
+
+.lunar-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.lunar-ill {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.lunar-next {
+  font-size: 0.8rem;
+  color: var(--accent-light);
+  margin-top: 0.25rem;
+}
+
+.lunar-age {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* ─── Noticias meteorológicas ────────────────────────────────────────────────── */
+
+.news-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.news-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-light);
+  margin-bottom: 0.75rem;
+}
+
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.news-chip {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0.1rem 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s, border-left-color 0.15s;
+}
+
+.news-chip:hover {
+  background: var(--surface-hover);
+  border-left-color: var(--accent-light);
+}
+
+.news-chip-meta {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.news-chip-source {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-light);
+}
+
+.news-chip-date {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.news-chip-title {
+  grid-column: 1;
+  grid-row: 2;
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.news-chip-summary {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-top: 0.2rem;
+}
+
+.news-chip-arrow {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.news-chip:hover .news-chip-arrow {
+  opacity: 1;
+  transform: translate(2px, -2px);
+}
+
+.news-updated {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  opacity: 0.6;
+  margin-top: 0.6rem;
+  text-align: right;
+}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}

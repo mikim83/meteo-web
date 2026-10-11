@@ -1,0 +1,33 @@
+# Ejemplo de crontab (crontab -e) para el servidor de meteo.dob-world.com.
+# Todo se instala en /data/meteo (la raíz que sirve nginx). Los logs van a /tmp o a /data/meteo.
+
+# --- Variables de entorno para los scripts (cron las aplica a todas las tareas) ---
+# URL de tiempo real del WiFiLogger 2 (https://wifilogger.net) de la estación Davis.
+WIFILOGGER_URL=http://192.168.2.15/rtd
+# URL de ping de Healthchecks (https://healthchecks.io): crea un check y pega aquí su URL.
+# Se llama solo tras un envío correcto a JDServer. Si se deja vacía, no se hace ping.
+HEALTHCHECKS_URL=https://hc-ping.com/<uuid-de-tu-check>
+
+# Lectura de la estación cada minuto: escribe el CSV del día e index.json
+* * * * * /data/meteo/scripts/fetch.py >>/tmp/fetch.log 2>&1
+# Resumen en texto dentro de index.html y versión Markdown (index.md)
+* * * * * sleep 20; /data/meteo/scripts/render_summary.py >> /tmp/render_summary.log 2>&1
+# Reminifica script-d3.js -> script-d3.min.js si el fuente cambió
+* * * * * /data/meteo/scripts/build.sh >> /data/meteo/build.log 2>&1
+# Envío de index.json a JDServer (15 s después de fetch.py) y ping a Healthchecks
+* * * * * sleep 15; /data/meteo/scripts/send_jdserver.py >> /tmp/send_jdserver.log 2>&1
+
+# Previsión (AEMET + Open-Meteo/AROME/ECMWF/ICON) en forecast.json cada 30 minutos
+7,37 * * * * /data/meteo/scripts/fetch_forecast.py >> /tmp/fetch_forecast.log 2>&1
+
+# Histórico: agregados diarios (historico_*.json) y export anual (meteo_<año>.txt)
+5 0 * * * /data/meteo/scripts/aggregate.py >> /data/meteo/cron.log 2>&1
+5 5 * * * /data/meteo/scripts/export_yearly.py >> /data/meteo/cron.log 2>&1
+
+# Agentes de Claude que actualizan news.json, heatwave_status.json e incendios.json y purgan la caché
+0 12 * * * /data/meteo/scripts/run_news_agent.sh >> /data/meteo/cron.log 2>&1
+0 0 * * * /data/meteo/scripts/run_news_agent.sh >> /data/meteo/cron.log 2>&1
+15 8 * * * /data/meteo/scripts/run_heatwave_agent.sh >> /data/meteo/cron.log 2>&1
+15 20 * * * /data/meteo/scripts/run_heatwave_agent.sh >> /data/meteo/cron.log 2>&1
+10 8 * * * /data/meteo/scripts/run_incendios_agent.sh >> /data/meteo/cron.log 2>&1
+10 20 * * * /data/meteo/scripts/run_incendios_agent.sh >> /data/meteo/cron.log 2>&1

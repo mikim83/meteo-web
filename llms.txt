@@ -1,0 +1,51 @@
+# Meteo Cerdanyola del Vallès
+
+> Estación meteorológica personal (Davis Vantage Vue) en Cerdanyola del Vallès, Barcelona (lat 41.4911, lon 2.1401). Publica datos en tiempo real, histórico propio desde 2023, noticias meteorológicas y seguimiento de incendios en Cataluña. Los datos son abiertos y se pueden leer sin ejecutar JavaScript.
+
+Zona horaria: Europe/Madrid. Los valores numéricos usan punto decimal. Los datos en tiempo real se refrescan cada minuto.
+
+## Datos en tiempo real
+
+- [index.json](https://meteo.dob-world.com/index.json): última lectura de la estación en JSON. Campos (todas las lecturas llegan como texto salvo los de máx/mín de 24 h):
+  - `updated`: fecha y hora de la lectura (ISO 8601 con zona horaria).
+  - `ext_temp`, `int_temp`: temperatura exterior e interior, en °C.
+  - `ext_hum`, `int_hum`: humedad relativa exterior e interior, en %.
+  - `heat_index`: sensación térmica de calor, en °C. `wind_chill`: sensación térmica de frío, en °C. `dew_point`: punto de rocío, en °C.
+  - `wind_speed`: viento instantáneo, en km/h. `wind_avg2` y `wind_avg10`: viento medio de 2 y 10 minutos, en km/h. `wind_gust`: racha, en km/h.
+  - `wind_dir`, `gust_dir`: dirección del viento y de la racha como rosa de 16 puntos en inglés (N, NNE, ... W, NW; la W es oeste). `wind_degree`, `gust_degree`: lo mismo en grados (0-360).
+  - `pressure`: presión atmosférica, en mbar (hPa). `pressure_trend`: tendencia (Rising Rapidly, Rising Slowly, Steady, Falling Slowly, Falling Rapidly).
+  - `rain_rate`: intensidad de lluvia actual, en mm/h. `rain_daily`: lluvia de hoy. `rain_24h`: últimas 24 h. `rain_month`: mes en curso. `rain_year`: año en curso. Todas en mm.
+  - `max_temp_24h`, `min_temp_24h`: máxima y mínima exteriores de las últimas 24 h, en °C (números), con la hora en `max_temp_24h_time` y `min_temp_24h_time` (HH:MM).
+- [Página principal](https://meteo.dob-world.com/): la misma información con gráficos de las últimas 24 h, arco solar, fase lunar y previsión. Incluye un resumen en texto con los valores actuales.
+- [index.md](https://meteo.dob-world.com/index.md): la home en Markdown con los valores actuales. También se obtiene pidiendo `https://meteo.dob-world.com/` con la cabecera `Accept: text/markdown`.
+
+## Histórico
+
+- [historico.html](https://meteo.dob-world.com/historico.html): récords, extremos, resúmenes por mes y año.
+- [historico_2026.json](https://meteo.dob-world.com/historico_2026.json): agregados diarios del año (también historico_2023.json, historico_2024.json, historico_2025.json) y [historico_meta.json](https://meteo.dob-world.com/historico_meta.json): récords y extremos.
+- Lecturas minuto a minuto, un fichero de texto por año, en CSV sin cabecera: [meteo_2026.txt](https://meteo.dob-world.com/meteo_2026.txt), [meteo_2025.txt](https://meteo.dob-world.com/meteo_2025.txt), [meteo_2024.txt](https://meteo.dob-world.com/meteo_2024.txt), [meteo_2023.txt](https://meteo.dob-world.com/meteo_2023.txt). Cada línea empieza por `AAAA-MM-DD HH:MM` y sigue con estas columnas: ext_temp, ext_hum, wind_speed, wind_degree, wind_dir, pressure, int_temp, int_hum, heat_index, dew_point, wind_gust, rain_daily, pressure_trend. Las líneas antiguas tienen menos columnas (2023 y parte de 2024 y 2026 solo llegan hasta algunas de las primeras; las filas recientes tienen las 13). Las columnas siempre mantienen el mismo orden y las que no existían se omiten por el final.
+
+## Previsión
+
+- [forecast.json](https://meteo.dob-world.com/forecast.json): previsión de Cerdanyola del Vallès para los próximos 7 días, combinando AEMET (cielo, probabilidad de lluvia, máximas y mínimas), Météo-France AROME (temperatura y viento de las primeras ~57 h), la media por hora de ECMWF IFS, DWD ICON-EU y AROME para la cantidad de lluvia (`precip`, con los modelos usados en `src.precip`) y Open-Meteo (el resto). Se regenera cada 30 minutos. Estructura (`schema` 1):
+  - `updated` (ISO 8601 con zona horaria), `timezone` (Europe/Madrid), `units` (unidad de cada campo), `location`, `sources` (qué fuentes respondieron).
+  - `summary`: resumen de las próximas 24 h ya calculado: `tmax`/`tmin` con su hora, `precip_mm`, `pop_max`, `rain` (tramos con lluvia: `from`, `to` en horas locales y `mm`), `rain_expected`, `wind_max`, `gust_max`, `uv_max_today`, `sunrise`, `sunset` y `now` (estado de la hora actual).
+  - `hours`: una entrada por hora local (`t` hora local sin zona, `ts` segundos Unix): `temp`, `feels`, `hum`, `dew`, `pop` (probabilidad de lluvia, %), `precip` (mm), `wind` y `gust` (km/h), `wind_dir` (rosa de 16 puntos con O de oeste) y `wind_deg`, `pressure`, `cloud`, `uv`, `freezing` (isoterma de 0 °C, m), `is_day`, `sky` y `src` (fuente de la temperatura y del cielo).
+  - `days`: una entrada por día: `date`, `sky`, `tmax`, `tmin`, `pop`, `precip`, `wind`, `wind_dir` (AEMET usa `C` para calma), `gust`, `uv`, `sunrise`, `sunset`, `hours_complete` (falso en el día en curso) y `src`.
+  - `sky` es un objeto `{code, emoji, label, night}`. `code` es un identificador neutro para elegir icono sin depender del emoji: `clear`, `mostly_clear`, `partly_cloudy`, `cloudy`, `overcast`, `fog`, `light_rain`, `rain`, `heavy_rain`, `thunder`, `snow` (o `unknown`). `label` está en castellano.
+  - Los valores que no existen son `null`; nunca significan cero.
+
+## Noticias e incendios
+
+- [news.json](https://meteo.dob-world.com/news.json): hasta 5 noticias meteorológicas recientes (título, url, fuente, fecha, resumen), actualizadas dos veces al día por un agente automático.
+- [incendios.html](https://meteo.dob-world.com/incendios.html) y [incendios.json](https://meteo.dob-world.com/incendios.json): incendios activos en Cataluña y noticias relacionadas.
+
+## Otros
+
+- [instrucciones.html](https://meteo.dob-world.com/instrucciones.html): cómo se usa la web.
+- [sitemap.xml](https://meteo.dob-world.com/sitemap.xml)
+
+## Notas de uso
+
+- Sin necesidad de clave ni registro. Los JSON se pueden pedir con una petición GET normal; `index.json` se cachea 60 segundos, así que no hace falta consultarlo más de una vez por minuto.
+- Es una estación aficionada: los datos no son oficiales. Para avisos oficiales, ver Meteocat (meteo.cat) y AEMET (aemet.es).

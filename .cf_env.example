@@ -1,0 +1,7 @@
+# Credenciales de Cloudflare para purgar la caché (copia este fichero a .cf_env y rellénalo).
+# .cf_env NO se sube al repo y debe tener permisos 600 (chmod 600 .cf_env).
+# Lo usan los agentes (scripts/run_*_agent.sh) tras actualizar news.json, incendios.json o heatwave_status.json.
+# Token de la API de Cloudflare con permiso "Cache Purge" sobre la zona.
+CF_API_TOKEN=pon_aqui_el_token
+# ID de la zona de Cloudflare (Overview de la zona, columna derecha).
+CF_ZONE_ID=pon_aqui_el_id_de_zona

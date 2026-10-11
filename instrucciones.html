@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instrucciones — Meteo Cerdanyola - Ateneu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --text: #e8edf4;
+      --text-muted: #8b9cb3;
+      --accent-light: #52c99d;
+      --border: rgba(255, 255, 255, 0.08);
+      --radius: 16px;
+      --font: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .header h1 { font-size: 1.25rem; font-weight: 600; }
+    .back {
+      color: var(--accent-light);
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+    .back:hover { text-decoration: underline; }
+    #content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 2rem;
+    }
+    #content.loading { color: var(--text-muted); }
+    #content.error { color: #e8a0a0; }
+    #content h1 { font-size: 1.5rem; margin-bottom: 0.75rem; margin-top: 1.5rem; }
+    #content h1:first-child { margin-top: 0; }
+    #content h2 { font-size: 1.2rem; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--accent-light); }
+    #content h3 { font-size: 1.05rem; margin-top: 1rem; margin-bottom: 0.4rem; }
+    #content p { margin-bottom: 0.75rem; }
+    #content ul, #content ol { margin: 0.5rem 0 1rem 1.5rem; }
+    #content li { margin-bottom: 0.25rem; }
+    #content hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+    #content code {
+      background: rgba(0,0,0,0.25);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+    #content pre {
+      background: rgba(0,0,0,0.3);
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+      font-size: 0.85rem;
+    }
+    #content pre code { background: none; padding: 0; }
+    #content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.75rem 0;
+      font-size: 0.9rem;
+    }
+    #content th, #content td {
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+    #content th { background: rgba(0,0,0,0.2); color: var(--accent-light); font-weight: 600; }
+    #content strong { font-weight: 600; }
+    #content a { color: var(--accent-light); text-decoration: none; }
+    #content a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <h1>Instrucciones</h1>
+      <a class="back" href="index.html">← Volver a Meteo Cerdanyola - Ateneu</a>
+    </header>
+    <div id="content" class="loading">Cargando instrucciones…</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    (function () {
+      var content = document.getElementById('content');
+      fetch('INSTRUCCIONES.md')
+        .then(function (res) {
+          if (!res.ok) throw new Error('No se pudo cargar INSTRUCCIONES.md');
+          return res.text();
+        })
+        .then(function (md) {
+          if (typeof marked !== 'undefined') {
+            content.innerHTML = marked.parse(md);
+            content.classList.remove('loading');
+          } else {
+            content.textContent = 'Error: no se cargó la librería de Markdown.';
+            content.classList.add('error');
+          }
+        })
+        .catch(function (err) {
+          content.textContent = 'No se pueden cargar las instrucciones. Abre esta página desde un servidor (por ejemplo python3 -m http.server 8000) con INSTRUCCIONES.md en la misma carpeta.';
+          content.classList.add('error');
+        });
+    })();
+  </script>
+</body>
+</html>
