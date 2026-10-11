@@ -1,0 +1,4 @@
+# Clave de AEMET OpenData (https://opendata.aemet.es/centrodedescargas/altaUsuario).
+# Copia este fichero a .aemet_env, rellénalo y ponle permisos 600. NO se sube al repo.
+# Reservada: de momento ningún script la usa (la previsión lee el XML público de AEMET).
+export AEMET_API_KEY=pon_aqui_la_clave

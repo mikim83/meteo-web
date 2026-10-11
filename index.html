@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meteo Cerdanyola del Vallès — Datos en tiempo real</title>
+  <meta name="description" content="Meteorología en tiempo real de Cerdanyola del Vallès. Estación Davis Vantage Vue: temperatura, viento, presión, arco solar y fase lunar.">
+  <meta property="og:title" content="Meteo Cerdanyola del Vallès">
+  <meta property="og:description" content="Temperatura, viento, presión y previsión en Cerdanyola del Vallès.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://meteo.dob-world.com/">
+  <meta property="og:locale" content="es_ES">
+  <link rel="canonical" href="https://meteo.dob-world.com/">
+  <link rel="alternate" type="application/json" href="index.json" title="Datos actuales de la estación (JSON)">
+  <link rel="alternate" type="text/plain" href="llms.txt" title="Descripción de los datos para IA">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Meteo Cerdanyola del Vallès",
+    "description": "Observación meteorológica en tiempo real de Cerdanyola del Vallès",
+    "url": "https://meteo.dob-world.com/",
+    "inLanguage": "es",
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 41.4911,
+      "longitude": 2.1401
+    }
+  }
+  </script>
+  <link rel="stylesheet" href="styles.css?v=20261007k">
+  <link rel="preconnect" href="https://api.open-meteo.com">
+  <link rel="preconnect" href="https://air-quality-api.open-meteo.com">
+  <link rel="preconnect" href="https://www.wetterzentrale.de">
+  <link rel="preconnect" href="https://embed.windy.com">
+  <link rel="preload" href="https://cdn.jsdelivr.net/combine/npm/d3-array@3/dist/d3-array.min.js,npm/d3-color@3/dist/d3-color.min.js,npm/d3-format@3/dist/d3-format.min.js,npm/d3-interpolate@3/dist/d3-interpolate.min.js,npm/d3-time@3/dist/d3-time.min.js,npm/d3-time-format@4/dist/d3-time-format.min.js,npm/d3-path@3/dist/d3-path.min.js,npm/d3-shape@3/dist/d3-shape.min.js,npm/d3-scale@4/dist/d3-scale.min.js,npm/d3-selection@3/dist/d3-selection.min.js" as="script">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet"></noscript>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="theme-toggle-wrap">
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+          <span class="theme-toggle-icon"></span>
+          <span class="theme-toggle-label">Modo oscuro</span>
+        </button>
+      </div>
+      <h1>Meteo Cerdanyola - Ateneu</h1>
+      <p class="location">Cerdanyola del Vallès</p>
+      <p class="hist-back"><a href="historico.html">📊 Ver histórico completo &rarr;</a> · <a href="incendios.html">🔥 Incendios a Catalunya &rarr;</a></p>
+    </header>
+
+    <main class="main">
+      <section id="resumen-texto" class="sr-only" aria-label="Resumen de los datos actuales">
+<!-- RESUMEN:START -->
+<!-- RESUMEN:END -->
+      </section>
+      <section id="hero" class="hero" hidden>
+        <div id="heatwave-banner" class="heatwave-banner" hidden></div>
+        <div class="hero-main">
+          <div class="hero-temps">
+            <div class="hero-ext-temp" id="hero-ext-temp">—</div>
+            <div class="hero-right">
+              <div class="hero-int-temp" id="hero-int-temp"></div>
+              <div class="hero-feels" id="hero-feels"></div>
+              <div class="hero-updated" id="hero-updated"></div>
+            </div>
+          </div>
+          <div class="hero-minmax" id="hero-minmax"></div>
+          <div class="hero-chips" id="hero-chips"></div>
+        </div>
+      </section>
+
+      <div class="astro-news-row">
+        <section id="astro" class="astro-panel" hidden>
+          <div class="astro-solar" id="astro-solar"></div>
+          <div class="astro-lunar" id="astro-lunar"></div>
+        </section>
+        <section id="news" class="news-feed" hidden>
+          <h2 class="news-title">📡 Noticias meteorológicas</h2>
+          <div id="news-list" class="news-list"></div>
+          <p class="news-updated" id="news-updated"></p>
+        </section>
+      </div>
+
+
+      <section id="history" class="history-section" hidden>
+        <h2 class="history-title">Últimas 24 horas</h2>
+        <div id="history-grid" class="history-grid"></div>
+      </section>
+
+      <div id="error" class="error" hidden>
+        <p>No se ha podido cargar el pronóstico. Comprueba tu conexión e inténtalo de nuevo.</p>
+      </div>
+
+      <section id="forecast" class="forecast" hidden>
+        <div class="forecast-head">
+          <h2 class="forecast-title">Previsión</h2>
+          <div class="forecast-tabs" role="tablist" aria-label="Tipo de previsión">
+            <button type="button" class="forecast-tab is-active" id="tab-summary" role="tab" aria-selected="true" aria-controls="forecast-summary" data-tab="summary">Próximas horas</button>
+            <button type="button" class="forecast-tab" id="tab-week" role="tab" aria-selected="false" aria-controls="forecast-week" data-tab="week">7 días</button>
+          </div>
+        </div>
+        <div id="forecast-summary" class="forecast-panel" role="tabpanel" aria-labelledby="tab-summary"></div>
+        <div id="forecast-week" class="forecast-panel" role="tabpanel" aria-labelledby="tab-week" hidden></div>
+        <p class="forecast-sources" id="forecast-sources"></p>
+      </section>
+
+      <section id="pollen" class="pollen-section" hidden>
+        <h2 class="pollen-title">Previsión de polen en el aire</h2>
+        <p class="pollen-subtitle">Cerdanyola del Vallès · máximo diario por tipo (granos/m³) · modelo CAMS Europa (~11 km)</p>
+        <div id="pollen-error" class="pollen-error" hidden>No se ha podido cargar la previsión de polen.</div>
+        <div id="pollen-grid" class="pollen-grid"></div>
+        <p class="pollen-attribution">Datos de polen: <a href="https://open-meteo.com/en/docs/air-quality-api" target="_blank" rel="noopener">Open-Meteo Air Quality</a> (Copernicus CAMS).</p>
+      </section>
+
+      <section class="diagrams-section">
+        <div class="diagrams-row">
+          <a class="diagram-link" href="https://www.wetterzentrale.de/es/show_diagrams.php?geoid=34208&model=gfs&var=201&run=00&lid=ENS&bw=" target="_blank" rel="noopener">
+            <img class="diagram-img" id="wz-ens-img" src="" alt="Diagrama Wetterzentrale GFS ENS" data-src="https://www.wetterzentrale.de/es/ens_image.php?geoid=34208&var=201&run=00&date=DATE&model=gfs&member=ENS&bw=">
+          </a>
+          <div class="diagram-slot diagram-iframe-wrap diagram-facade" id="windy-facade" data-src="https://embed.windy.com/embed2.html?lat=41.771&lon=2.120&detailLat=41.771&detailLon=2.120&width=650&height=450&zoom=8&level=surface&overlay=radar&product=radar&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" role="button" tabindex="0" aria-label="Cargar radar de Windy">
+            <span class="diagram-facade-label">▶ Cargar radar Windy</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Pronóstico: <a href="https://www.aemet.es/" target="_blank" rel="noopener">AEMET</a> · <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (ECMWF, DWD ICON, Météo-France AROME) · Polen: <a href="https://open-meteo.com/en/docs/air-quality-api" target="_blank" rel="noopener">Open-Meteo Air Quality</a> (Copernicus CAMS) · <a href="incendios.html">Incendios</a> · <a href="instrucciones.html">Instrucciones</a></p>
+    </footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/combine/npm/d3-array@3/dist/d3-array.min.js,npm/d3-color@3/dist/d3-color.min.js,npm/d3-format@3/dist/d3-format.min.js,npm/d3-interpolate@3/dist/d3-interpolate.min.js,npm/d3-time@3/dist/d3-time.min.js,npm/d3-time-format@4/dist/d3-time-format.min.js,npm/d3-path@3/dist/d3-path.min.js,npm/d3-shape@3/dist/d3-shape.min.js,npm/d3-scale@4/dist/d3-scale.min.js,npm/d3-selection@3/dist/d3-selection.min.js"></script>
+  <script src="script-d3.min.js?v=20261007k"></script>
+</body>
+</html>

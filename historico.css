@@ -1,0 +1,193 @@
+/* --- Página Histórico --- */
+.hist-back {
+  margin-top: 0.5rem;
+}
+
+.hist-back a {
+  color: var(--accent-light);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.hist-back a:hover {
+  text-decoration: underline;
+}
+
+.hist-section {
+  margin-bottom: 2.5rem;
+}
+
+.hist-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent-light);
+  margin-bottom: 1rem;
+}
+
+.hist-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.hist-title-row .hist-title {
+  margin-bottom: 0;
+}
+
+.hist-year-select {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.6rem;
+  font-family: var(--font);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.hist-year-select:hover {
+  background: var(--surface-hover);
+}
+
+.hist-record-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+/* Un día como hoy */
+.hist-otd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.hist-otd-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem;
+  text-align: center;
+}
+
+.hist-otd-year {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.hist-otd-temps {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.hist-otd-max { color: #e08a3c; }
+.hist-otd-min { color: #4a9fd8; }
+
+.hist-otd-extra {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+
+/* Charts */
+.hist-chart-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.hist-svg {
+  width: 100%;
+  min-width: 320px;
+  height: 220px;
+  display: block;
+}
+
+.hist-grid-line {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.hist-axis-label {
+  fill: var(--text-muted);
+  font-size: 9px;
+  font-family: var(--font);
+}
+
+.hist-range-line {
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+
+.hist-avg-dot {
+  fill: var(--accent-light);
+}
+
+.hist-rain-bar {
+  fill: #4a9fd8;
+  opacity: 0.75;
+}
+
+.hist-bar-value {
+  fill: var(--text);
+  font-size: 9px;
+  font-weight: 600;
+  font-family: var(--font);
+}
+
+.hist-heatmap-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: -0.6rem;
+  margin-bottom: 1rem;
+}
+
+.hist-heatmap-svg {
+  height: auto;
+  min-height: 60px;
+}
+
+.hist-heatmap-svg.hist-heatmap-year {
+  min-height: 120px;
+}
+
+.hist-heatmap-cell,
+.hist-hit-area {
+  cursor: pointer;
+}
+
+.hist-heatmap-cell-heatwave {
+  stroke: #e04030;
+  stroke-width: 1.5;
+}
+
+.hist-tooltip {
+  position: fixed;
+  z-index: 1000;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.35rem 0.6rem;
+  font-family: var(--font);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(2px);
+  transition: opacity 0.06s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.hist-tooltip.visible {
+  opacity: 1;
+}
