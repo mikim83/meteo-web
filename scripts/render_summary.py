@@ -108,7 +108,7 @@ Datos actuales de la estación (lectura de las {when}, hora de Madrid). Se actua
 - [index.json](https://meteo.dob-world.com/index.json): última lectura en JSON, con todos los campos.
 - [llms.txt](https://meteo.dob-world.com/llms.txt): descripción de los campos, unidades y ficheros de histórico.
 - [Histórico](https://meteo.dob-world.com/historico.html): récords, extremos y resúmenes por mes y año.
-- [forecast.json](https://meteo.dob-world.com/forecast.json): previsión de 7 días (AEMET, Météo-France AROME y Open-Meteo), con resumen de las próximas 24 h.
+- [forecast.json](https://meteo.dob-world.com/forecast.json): pronóstico de 7 días (AEMET, Météo-France AROME y Open-Meteo), con resumen de las próximas 24 h.
 - [Noticias meteorológicas](https://meteo.dob-world.com/news.json) (JSON).
 - [Incendios en Cataluña](https://meteo.dob-world.com/incendios.html) ([JSON](https://meteo.dob-world.com/incendios.json)).
 

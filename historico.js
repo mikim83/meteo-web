@@ -38,8 +38,8 @@
     var mostHumid = records.mostHumid, driest = records.driest;
 
     var cards = [
-      { title: '🔥 Día más caluroso', value: hottest.tmax.toFixed(1) + '°C', sub: fmtDate(hottest.date) + (hottest.tmax_time ? ' · ' + hottest.tmax_time : '') },
-      { title: '❄️ Día más frío', value: coldest.tmin.toFixed(1) + '°C', sub: fmtDate(coldest.date) + (coldest.tmin_time ? ' · ' + coldest.tmin_time : '') },
+      { title: '🔥 Día más caluroso', value: hottest.tmax.toFixed(1) + '\u00a0°C', sub: fmtDate(hottest.date) + (hottest.tmax_time ? ' · ' + hottest.tmax_time : '') },
+      { title: '❄️ Día más frío', value: coldest.tmin.toFixed(1) + '\u00a0°C', sub: fmtDate(coldest.date) + (coldest.tmin_time ? ' · ' + coldest.tmin_time : '') },
     ];
     if (windiest) cards.push({ title: '💨 Racha más fuerte', value: windiest.wmax.toFixed(1) + ' km/h', sub: fmtDate(windiest.date) });
     if (rainiest && rainiest.rain > 0) cards.push({ title: '🌧️ Día más lluvioso', value: rainiest.rain.toFixed(1) + ' mm', sub: fmtDate(rainiest.date) });
@@ -248,9 +248,9 @@
     if (heatStreak) cards.push({ title: '🥵 Ola de calor más larga', value: heatStreak.len + ' días', sub: fmtDate(heatStreak.start) + ' – ' + fmtDate(heatStreak.end) + ' (≥30°C)' });
     if (coldStreak) cards.push({ title: '🥶 Racha de frío más larga', value: coldStreak.len + ' días', sub: fmtDate(coldStreak.start) + ' – ' + fmtDate(coldStreak.end) + ' (≤10°C máx.)' });
     if (rainStreak) cards.push({ title: '🌦️ Racha de lluvia más larga', value: rainStreak.len + ' días', sub: fmtDate(rainStreak.start) + ' – ' + fmtDate(rainStreak.end) });
-    cards.push({ title: '🌴 Noches tropicales', value: extremes.tropicalNights, sub: 'días con mínima ≥20°C (total histórico)' });
-    cards.push({ title: '🧊 Días de helada', value: extremes.frostDays, sub: 'días con mínima <0°C (total histórico)' });
-    cards.push({ title: '🔥 Días muy calurosos', value: extremes.hotDays, sub: 'días con máxima ≥35°C (total histórico)' });
+    cards.push({ title: '🌴 Noches tropicales', value: extremes.tropicalNights, sub: 'días con mínima ≥20\u00a0°C (total histórico)' });
+    cards.push({ title: '🧊 Días de helada', value: extremes.frostDays, sub: 'días con mínima <0\u00a0°C (total histórico)' });
+    cards.push({ title: '🔥 Días muy calurosos', value: extremes.hotDays, sub: 'días con máxima ≥35\u00a0°C (total histórico)' });
 
     el.innerHTML = cards.map(function (c) {
       return '<div class="history-card"><div class="history-card-title">' + c.title + '</div>' +
@@ -463,7 +463,7 @@
 
     el.innerHTML = yearSummaries.map(function (g) {
       return '<div class="history-card"><div class="history-card-title">' + g.year + '</div>' +
-        '<div class="hist-record-value">' + g.tavg.toFixed(1) + '°C media</div>' +
+        '<div class="hist-record-value">' + g.tavg.toFixed(1) + '\u00a0°C media</div>' +
         '<div class="history-card-subtitle">↑' + g.tmax.toFixed(1) + '° · ↓' + g.tmin.toFixed(1) + '° · 🌧️ ' + g.rain.toFixed(0) + ' mm · ' + g.n + ' días</div></div>';
     }).join('');
     section.hidden = false;

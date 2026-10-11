@@ -146,12 +146,12 @@
     var heatIndex = parseFloat(json.heat_index);
     var rainDaily = parseFloat(json.rain_daily);
 
-    heroExtTempEl.textContent = isNaN(extTemp) ? '—' : extTemp.toFixed(1) + '°C';
+    heroExtTempEl.textContent = isNaN(extTemp) ? '—' : extTemp.toFixed(1) + '\u00a0°C';
     heroExtTempEl.style.color = tempColor(extTemp);
     heroEl.style.setProperty('--hero-accent', tempColor(extTemp));
 
-    heroIntTempEl.textContent = isNaN(intTemp) ? '' : intTemp.toFixed(1) + '°C interior' + (isNaN(intHum) ? '' : ' · ' + Math.round(intHum) + '%');
-    heroFeelsEl.textContent = (!isNaN(heatIndex) && Math.abs(heatIndex - extTemp) >= 2) ? 'Sensación ' + heatIndex.toFixed(0) + '°C' : '';
+    heroIntTempEl.textContent = isNaN(intTemp) ? '' : intTemp.toFixed(1) + '\u00a0°C interior' + (isNaN(intHum) ? '' : ' · ' + Math.round(intHum) + '%');
+    heroFeelsEl.textContent = (!isNaN(heatIndex) && Math.abs(heatIndex - extTemp) >= 2) ? 'Sensación ' + heatIndex.toFixed(0) + '\u00a0°C' : '';
 
     heroMinmaxEl.innerHTML =
       '<span class="hero-max">↑ ' + (isNaN(maxT) ? '—' : maxT.toFixed(1) + '°') + (maxTime ? ' <em>' + maxTime + '</em>' : '') + '</span>' +
@@ -164,7 +164,7 @@
       { icon: '💧', label: 'Humedad ext.', value: isNaN(hum) ? '—' : Math.round(hum) + '%' },
       { icon: '💨', label: 'Viento', value: windVal },
       { icon: '🌡', label: 'Presión', value: isNaN(pressure) ? '—' : pressure.toFixed(1) + ' hPa' + (json.pressure_trend ? '  ' + translateTrend(json.pressure_trend) : '') },
-      { icon: '🌫', label: 'Punto de rocío', value: isNaN(dewPoint) ? '—' : dewPoint.toFixed(1) + '°C' },
+      { icon: '🌫', label: 'Punto de rocío', value: isNaN(dewPoint) ? '—' : dewPoint.toFixed(1) + '\u00a0°C' },
       { icon: '🌧', label: 'Lluvia hoy', value: isNaN(rainDaily) ? '—' : rainDaily.toFixed(1) + ' mm' },
       { icon: '📅', label: 'Lluvia mes', value: isNaN(parseFloat(json.rain_month)) ? '—' : parseFloat(json.rain_month).toFixed(1) + ' mm' }
     ];
@@ -179,9 +179,9 @@
 
     // Actualizar título y meta description
     if (!isNaN(extTemp)) {
-      document.title = extTemp.toFixed(1) + '°C · Meteo Cerdanyola';
+      document.title = extTemp.toFixed(1) + ' °C · Meteo Cerdanyola';
       var metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', 'Temperatura exterior: ' + extTemp.toFixed(1) + '°C. Humedad: ' + Math.round(hum) + '%. Presión: ' + pressure.toFixed(1) + ' hPa. Cerdanyola del Vallès en tiempo real.');
+      if (metaDesc) metaDesc.setAttribute('content', 'Temperatura exterior: ' + extTemp.toFixed(1) + ' °C. Humedad: ' + Math.round(hum) + '%. Presión: ' + pressure.toFixed(1) + ' hPa. Cerdanyola del Vallès en tiempo real.');
     }
   }
 
@@ -379,7 +379,7 @@
       });
   }
 
-  // ─── Previsión ───────────────────────────────────────────────────────────────
+  // ─── Pronóstico ───────────────────────────────────────────────────────────────
   // Datos de forecast.json (lo genera fetch_forecast.py cada 30 min): AEMET (cielo,
   // probabilidad de lluvia, máx/mín), Météo-France AROME (temperatura, lluvia y
   // viento de las primeras ~57 h) y Open-Meteo (resto de variables y días 4-7).
@@ -914,7 +914,7 @@
     if (src.arome && src.arome.ok) names.push('Météo-France (AROME)');
     if (src['open-meteo'] && src['open-meteo'].ok) names.push('Open-Meteo');
     var upd = fcData.updated ? new Date(fcData.updated).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
-    fcSourcesEl.textContent = 'Fuentes: ' + names.join(' · ') + (upd ? ' · actualizado a las ' + upd : '') + '. Cielo y probabilidad de lluvia: AEMET. Cantidad de lluvia: media de los modelos ECMWF, ICON y AROME. Previsión orientativa; los avisos oficiales están en AEMET y Meteocat.';
+    fcSourcesEl.textContent = 'Fuentes: ' + names.join(' · ') + (upd ? ' · actualizado a las ' + upd : '') + '. Cielo y probabilidad de lluvia: AEMET. Cantidad de lluvia: media de los modelos ECMWF, ICON y AROME. Pronóstico orientativo; los avisos oficiales están en AEMET y Meteocat.';
   }
 
   function initForecastTabs() {
@@ -1078,7 +1078,7 @@
 
   function formatStationValue(value, unit) {
     if (value == null || isNaN(value)) return '—';
-    if (unit === '°C') return value.toFixed(1) + unit;
+    if (unit === '°C') return value.toFixed(1) + '\u00a0' + unit;
     if (unit === '%') return value + unit;
     if (unit === 'km/h') return value.toFixed(1) + ' ' + unit;
     if (unit === '°') return value + unit;
@@ -1437,7 +1437,7 @@
               var cx = xScale(idx0);
               var cy = yScale(v);
               var labelStr;
-              if (series.unit === '°C') labelStr = v.toFixed(1) + '°C';
+              if (series.unit === '°C') labelStr = v.toFixed(1) + '\u00a0°C';
               else if (series.unit === '%') labelStr = Math.round(v) + '%';
               else if (series.unit === 'km/h' || series.unit === 'hPa' || series.unit === 'mm') labelStr = v.toFixed(1) + ' ' + series.unit;
               else labelStr = v.toFixed(1);
