@@ -28,20 +28,18 @@
     }
   }
   </script>
-  <link rel="stylesheet" href="styles.css?v=20261011a">
-  <link rel="preconnect" href="https://api.open-meteo.com">
+  <link rel="stylesheet" href="styles.css?v=20261022b">
   <link rel="preconnect" href="https://air-quality-api.open-meteo.com">
-  <link rel="preconnect" href="https://www.wetterzentrale.de">
-  <link rel="preconnect" href="https://embed.windy.com">
   <link rel="preload" href="https://cdn.jsdelivr.net/combine/npm/d3-array@3/dist/d3-array.min.js,npm/d3-color@3/dist/d3-color.min.js,npm/d3-format@3/dist/d3-format.min.js,npm/d3-interpolate@3/dist/d3-interpolate.min.js,npm/d3-time@3/dist/d3-time.min.js,npm/d3-time-format@4/dist/d3-time-format.min.js,npm/d3-path@3/dist/d3-path.min.js,npm/d3-shape@3/dist/d3-shape.min.js,npm/d3-scale@4/dist/d3-scale.min.js,npm/d3-selection@3/dist/d3-selection.min.js" as="script">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet"></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=optional" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=optional" rel="stylesheet"></noscript>
 </head>
 <body>
+  <script>try { if (localStorage.getItem('meteo-theme') === 'light') document.body.classList.add('theme-light'); } catch (e) {}</script>
   <div class="app">
     <header class="header">
       <div class="theme-toggle-wrap">
-        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+        <button type="button" class="theme-toggle" id="theme-toggle">
           <span class="theme-toggle-icon"></span>
           <span class="theme-toggle-label">Modo oscuro</span>
         </button>
@@ -115,12 +113,12 @@
         <p class="pollen-attribution">Datos de polen: <a href="https://open-meteo.com/en/docs/air-quality-api" target="_blank" rel="noopener">Open-Meteo Air Quality</a> (Copernicus CAMS).</p>
       </section>
 
-      <section class="diagrams-section">
+      <section id="diagrams" class="diagrams-section" hidden>
         <div class="diagrams-row">
           <a class="diagram-link" href="https://www.wetterzentrale.de/es/show_diagrams.php?geoid=34208&model=gfs&var=201&run=00&lid=ENS&bw=" target="_blank" rel="noopener">
-            <img class="diagram-img" id="wz-ens-img" src="" alt="Diagrama Wetterzentrale GFS ENS" data-src="https://www.wetterzentrale.de/es/ens_image.php?geoid=34208&var=201&run=00&date=DATE&model=gfs&member=ENS&bw=">
+            <img class="diagram-img" id="wz-ens-img" alt="Diagrama Wetterzentrale GFS ENS" width="850" height="620" loading="lazy" decoding="async" data-src="https://www.wetterzentrale.de/es/ens_image.php?geoid=34208&var=201&run=00&date=DATE&model=gfs&member=ENS&bw=">
           </a>
-          <div class="diagram-slot diagram-iframe-wrap diagram-facade" id="windy-facade" data-src="https://embed.windy.com/embed2.html?lat=41.771&lon=2.120&detailLat=41.771&detailLon=2.120&width=650&height=450&zoom=8&level=surface&overlay=radar&product=radar&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" role="button" tabindex="0" aria-label="Cargar radar de Windy">
+          <div class="diagram-slot diagram-iframe-wrap diagram-facade" id="windy-facade" data-src="https://embed.windy.com/embed2.html?lat=41.771&lon=2.120&detailLat=41.771&detailLon=2.120&width=650&height=450&zoom=8&level=surface&overlay=radar&product=radar&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" role="button" tabindex="0" aria-label="Cargar radar Windy">
             <span class="diagram-facade-label">▶ Cargar radar Windy</span>
           </div>
         </div>
@@ -131,7 +129,7 @@
       <p>Pronóstico: <a href="https://www.aemet.es/" target="_blank" rel="noopener">AEMET</a> · <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (ECMWF, DWD ICON, Météo-France AROME) · Polen: <a href="https://open-meteo.com/en/docs/air-quality-api" target="_blank" rel="noopener">Open-Meteo Air Quality</a> (Copernicus CAMS) · <a href="incendios.html">Incendios</a> · <a href="instrucciones.html">Instrucciones</a></p>
     </footer>
   </div>
-  <script src="https://cdn.jsdelivr.net/combine/npm/d3-array@3/dist/d3-array.min.js,npm/d3-color@3/dist/d3-color.min.js,npm/d3-format@3/dist/d3-format.min.js,npm/d3-interpolate@3/dist/d3-interpolate.min.js,npm/d3-time@3/dist/d3-time.min.js,npm/d3-time-format@4/dist/d3-time-format.min.js,npm/d3-path@3/dist/d3-path.min.js,npm/d3-shape@3/dist/d3-shape.min.js,npm/d3-scale@4/dist/d3-scale.min.js,npm/d3-selection@3/dist/d3-selection.min.js"></script>
-  <script src="script-d3.min.js?v=20261011a"></script>
+  <script src="https://cdn.jsdelivr.net/combine/npm/d3-array@3/dist/d3-array.min.js,npm/d3-color@3/dist/d3-color.min.js,npm/d3-format@3/dist/d3-format.min.js,npm/d3-interpolate@3/dist/d3-interpolate.min.js,npm/d3-time@3/dist/d3-time.min.js,npm/d3-time-format@4/dist/d3-time-format.min.js,npm/d3-path@3/dist/d3-path.min.js,npm/d3-shape@3/dist/d3-shape.min.js,npm/d3-scale@4/dist/d3-scale.min.js,npm/d3-selection@3/dist/d3-selection.min.js" defer></script>
+  <script src="script-d3.min.js?v=20261022a" defer></script>
 </body>
 </html>

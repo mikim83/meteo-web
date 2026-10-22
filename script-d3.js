@@ -57,6 +57,50 @@
   const newsEl = document.getElementById('news');
   const newsListEl = document.getElementById('news-list');
   const newsUpdatedEl = document.getElementById('news-updated');
+  const diagramsEl = document.getElementById('diagrams');
+
+  // ─── Orden de aparición (evita saltos de maquetación, CLS) ───────────────────
+  // Cada sección se rellena con una petición que termina cuando termina. Si se
+  // mostraran según llegan, una sección de arriba empujaría hacia abajo lo que ya
+  // se ve. Cada paso se pinta solo cuando sus peticiones y las de todos los pasos
+  // anteriores han terminado (bien o mal); los diagramas van al final.
+  var REVEAL_STEPS = [
+    { name: 'hero', needs: ['index', 'heatwave'] },
+    { name: 'astro', needs: ['index', 'news'] },
+    { name: 'history', needs: ['history'] },
+    { name: 'forecast', needs: ['forecast'] },
+    { name: 'pollen', needs: ['pollen'] },
+    { name: 'diagrams', needs: [] }
+  ];
+  var revealDone = {};    // peticiones terminadas
+  var revealQueue = {};   // paso -> funciones que pintan
+  var revealIdx = 0;
+
+  function stepIndex(name) {
+    for (var i = 0; i < REVEAL_STEPS.length; i++) if (REVEAL_STEPS[i].name === name) return i;
+    return -1;
+  }
+
+  // Pinta ya si el paso está desbloqueado; si no, cuando le toque.
+  function whenRevealed(name, fn) {
+    if (stepIndex(name) < revealIdx) { fn(); return; }
+    (revealQueue[name] = revealQueue[name] || []).push(fn);
+  }
+
+  function settle(source) {
+    revealDone[source] = true;
+    while (revealIdx < REVEAL_STEPS.length &&
+           REVEAL_STEPS[revealIdx].needs.every(function (n) { return revealDone[n]; })) {
+      var step = REVEAL_STEPS[revealIdx++];
+      (revealQueue[step.name] || []).forEach(function (fn) { fn(); });
+      delete revealQueue[step.name];
+    }
+  }
+
+  // Por si alguna petición se queda colgada: a los 10 s se muestra lo que haya.
+  setTimeout(function () {
+    ['index', 'heatwave', 'news', 'history', 'forecast', 'pollen'].forEach(settle);
+  }, 10000);
 
   const POLLEN_TYPES = [
     { key: 'alder_pollen', label: 'Aliso' },
@@ -368,15 +412,14 @@
         return res.json();
       })
       .then(function (json) {
-        renderHero(json);
-        renderSolarArc();
-        renderLunarPhase();
+        whenRevealed('hero', function () { renderHero(json); });
+        whenRevealed('astro', function () { renderSolarArc(); renderLunarPhase(); });
       })
       .catch(function () {
         // Si falla index.json, el hero queda oculto; la estación sigue con today.txt
-        renderSolarArc();
-        renderLunarPhase();
-      });
+        whenRevealed('astro', function () { renderSolarArc(); renderLunarPhase(); });
+      })
+      .then(function () { settle('index'); });
   }
 
   // ─── Pronóstico ───────────────────────────────────────────────────────────────
@@ -935,11 +978,14 @@
         var keep = data.hours.filter(function (h) { return h.ts >= h0; });
         if (keep.length) data.hours = keep;
         fcData = data;
-        renderForecast();
-        forecastEl.hidden = false;
-        errorEl.hidden = true;
+        whenRevealed('forecast', function () {
+          renderForecast();
+          forecastEl.hidden = false;
+          errorEl.hidden = true;
+        });
       })
-      .catch(function () { if (!fcData) showError(); });
+      .catch(function () { if (!fcData) whenRevealed('forecast', showError); })
+      .then(function () { settle('forecast'); });
   }
 
   // ─── Ola de calor ────────────────────────────────────────────────────────────
@@ -964,7 +1010,8 @@
       .then(function (data) { renderHeatwaveBanner(data); })
       .catch(function () {
         if (heatwaveBannerEl) heatwaveBannerEl.hidden = true;
-      });
+      })
+      .then(function () { settle('heatwave'); });
   }
 
   // ─── Polen ───────────────────────────────────────────────────────────────────
@@ -1026,7 +1073,7 @@
   function fetchPollen() {
     var cacheKey = 'meteo-cache-pollen';
     var cached = getCache(cacheKey);
-    if (cached) { renderPollen(cached); return; }
+    if (cached) { whenRevealed('pollen', function () { renderPollen(cached); }); settle('pollen'); return; }
     var params = new URLSearchParams({
       latitude: COORDS.lat,
       longitude: COORDS.lon,
@@ -1041,13 +1088,16 @@
         if (!data.hourly) throw new Error('Sin datos');
         var rows = aggregatePollenByDay(data.hourly);
         setCache(cacheKey, rows);
-        renderPollen(rows);
+        whenRevealed('pollen', function () { renderPollen(rows); });
       })
       .catch(function () {
-        pollenErrorEl.hidden = false;
-        pollenGridEl.innerHTML = '';
-        pollenSectionEl.hidden = false;
-      });
+        whenRevealed('pollen', function () {
+          pollenErrorEl.hidden = false;
+          pollenGridEl.innerHTML = '';
+          pollenSectionEl.hidden = false;
+        });
+      })
+      .then(function () { settle('pollen'); });
   }
 
   // ─── Estación (today.txt) ────────────────────────────────────────────────────
@@ -1345,17 +1395,29 @@
             .attr('fill', colors.line + '18');
 
           if (series.unit === '°C') {
-            // Colored segments per temperature
-            for (var i = 0; i < lineData.length - 1; i++) {
-              var d0 = lineData[i], d1 = lineData[i + 1];
-              if (d0.v == null || d1.v == null) continue;
-              g.append('line')
-                .attr('x1', xScale(d0.i)).attr('y1', yScale(d0.v))
-                .attr('x2', xScale(d1.i)).attr('y2', yScale(d1.v))
-                .attr('stroke', tempColor(d0.v))
-                .attr('stroke-width', 1.5)
-                .attr('stroke-linecap', 'round');
+            // Color según la temperatura: un único path con degradado vertical
+            // (antes, una línea SVG por lectura: ~1.440 elementos por gráfica).
+            var gradId = 'temp-grad-' + item.idx;
+            var grad = svgEl.append('defs').append('linearGradient')
+              .attr('id', gradId)
+              .attr('gradientUnits', 'userSpaceOnUse')
+              .attr('x1', 0).attr('x2', 0)
+              .attr('y1', yScale(yMax)).attr('y2', yScale(yMin));
+            for (var k = 0; k <= 10; k++) {
+              var tv = yMax - (yMax - yMin) * k / 10;
+              grad.append('stop').attr('offset', (k * 10) + '%').attr('stop-color', tempColor(tv));
             }
+            g.append('path')
+              .datum(lineData)
+              .attr('d', d3.line()
+                .defined(function (d) { return d.v != null; })
+                .x(function (d) { return xScale(d.i); })
+                .y(function (d) { return yScale(d.v); }))
+              .attr('fill', 'none')
+              .attr('stroke', 'url(#' + gradId + ')')
+              .attr('stroke-width', 1.5)
+              .attr('stroke-linejoin', 'round')
+              .attr('stroke-linecap', 'round');
           } else {
             var line = d3.line()
               .defined(function (d) { return d.v != null; })
@@ -1476,8 +1538,6 @@
   }
 
   function fetchStation() {
-    historySectionEl.hidden = true;
-
     var now = new Date();
     var yesterday = new Date(now);
     yesterday.setDate(yesterday.getDate() - 1);
@@ -1502,11 +1562,12 @@
         });
         if (all.length > 1440) all = all.slice(all.length - 1440);
         if (all.length === 0) return;
-        renderHistoryCharts(all);
+        whenRevealed('history', function () { renderHistoryCharts(all); });
       })
       .catch(function (err) {
         console.error('Error cargando datos de estación:', err);
-      });
+      })
+      .then(function () { settle('history'); });
   }
 
   // ─── Noticias ────────────────────────────────────────────────────────────────
@@ -1519,24 +1580,29 @@
         var items = data.items.slice().sort(function (a, b) {
           return new Date(b.date || 0) - new Date(a.date || 0);
         });
-        newsListEl.innerHTML = items.map(function (item) {
-          var dateLabel = item.date ? new Date(item.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : '';
-          return '<a class="news-chip" href="' + item.url + '" target="_blank" rel="noopener">' +
-            '<span class="news-chip-meta"><span class="news-chip-source">' + (item.source || '') + '</span><span class="news-chip-date">' + dateLabel + '</span></span>' +
-            '<span class="news-chip-title">' + item.title + '</span>' +
-            (item.summary ? '<span class="news-chip-summary">' + item.summary + '</span>' : '') +
-            '<span class="news-chip-arrow">↗</span>' +
-          '</a>';
-        }).join('');
-        if (data.updated) {
-          var d = new Date(data.updated);
-          newsUpdatedEl.textContent = 'Actualizado ' + d.toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-        }
-        newsEl.hidden = false;
+        whenRevealed('astro', function () { renderNews(data, items); });
       })
       .catch(function () {
         // Si no hay news.json aún, la sección queda oculta
-      });
+      })
+      .then(function () { settle('news'); });
+  }
+
+  function renderNews(data, items) {
+    newsListEl.innerHTML = items.map(function (item) {
+      var dateLabel = item.date ? new Date(item.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : '';
+      return '<a class="news-chip" href="' + item.url + '" target="_blank" rel="noopener">' +
+        '<span class="news-chip-meta"><span class="news-chip-source">' + (item.source || '') + '</span><span class="news-chip-date">' + dateLabel + '</span></span>' +
+        '<span class="news-chip-title">' + item.title + '</span>' +
+        (item.summary ? '<span class="news-chip-summary">' + item.summary + '</span>' : '') +
+        '<span class="news-chip-arrow">↗</span>' +
+      '</a>';
+    }).join('');
+    if (data.updated) {
+      var d = new Date(data.updated);
+      newsUpdatedEl.textContent = 'Actualizado ' + d.toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    }
+    newsEl.hidden = false;
   }
 
   // ─── Init ────────────────────────────────────────────────────────────────────
@@ -1555,11 +1621,24 @@
   setInterval(fetchForecast, 15 * 60 * 1000);
 
   var wzImg = document.getElementById('wz-ens-img');
-  if (wzImg && wzImg.dataset.src) {
+  function loadWzImg() {
+    if (!wzImg || !wzImg.dataset.src || wzImg.src) return;
     var today = new Date();
     var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
     wzImg.src = wzImg.dataset.src.replace('DATE', dateStr);
   }
+
+  // Los diagramas van al final: se muestran cuando ya está todo lo de encima y la
+  // imagen (177 KiB, de terceros) solo se pide cuando se acerca a la pantalla.
+  whenRevealed('diagrams', function () {
+    if (diagramsEl) diagramsEl.hidden = false;
+    if (!wzImg) return;
+    if (!('IntersectionObserver' in window)) { loadWzImg(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      if (entries.some(function (e) { return e.isIntersecting; })) { io.disconnect(); loadWzImg(); }
+    }, { rootMargin: '300px' });
+    io.observe(wzImg);
+  });
 
   // Facade: don't load the heavy Windy embed (JS/CSS) until the user asks for it
   var windyFacade = document.getElementById('windy-facade');
