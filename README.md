@@ -94,9 +94,24 @@ location ~ /\.(?!well-known) { deny all; }
 location ~ ^/(scripts|node_modules|old-web|old-new-web|backup-[^/]+|__pycache__)(/|$) { deny all; }
 location ~* ^/(package(-lock)?\.json)$ { deny all; }
 location ~* \.(log|py|sh)$ { deny all; }
+
+# CSS/JS con ?v= en la URL: caché de un año (la versión cambia con cada cambio)
+location ~* \.(css|js)$ { add_header Cache-Control $meteo_asset_cache; }
 ```
 
-(`map $http_accept $meteo_wants_md { default 0; "~*text/markdown" 1; }` va fuera del `server`.)
+Fuera del `server` van los dos `map` y la compresión gzip (Cloudflare ya comprime hacia los navegadores; esto reduce lo que sube del origen al túnel):
+
+```nginx
+map $http_accept $meteo_wants_md { default 0; "~*text/markdown" 1; }
+map $arg_v $meteo_asset_cache { "" "public, max-age=60"; default "public, max-age=31536000, immutable"; }
+
+gzip on;
+gzip_vary on;
+gzip_proxied any;
+gzip_comp_level 5;
+gzip_min_length 1024;
+gzip_types text/plain text/css text/markdown text/xml application/javascript application/json application/xml application/rss+xml image/svg+xml;
+```
 
 ## Variables de entorno
 
