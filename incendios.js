@@ -270,18 +270,23 @@
   }
 
   var tileLayer = null;
+  // Mapa base de OpenStreetMap en los dos temas. En oscuro se oscurece con un filtro CSS
+  // (.inc-tiles-dark): los mapas oscuros de CARTO ahora exigen API key y pintaban
+  // «API KEY REQUIRED» en cada tesela.
   function tileConfigForTheme() {
     var dark = !document.body.classList.contains('theme-light');
-    return dark
-      ? { url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', attribution: '&copy; OpenStreetMap contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' }
-      : { url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', attribution: '&copy; OpenStreetMap contributors' };
+    return {
+      url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      className: dark ? 'inc-tiles-dark' : ''
+    };
   }
 
   function applyMapTheme() {
     if (!map) return;
     if (tileLayer) map.removeLayer(tileLayer);
     var cfg = tileConfigForTheme();
-    tileLayer = L.tileLayer(cfg.url, { attribution: cfg.attribution, maxZoom: 18, subdomains: 'abcd' }).addTo(map);
+    tileLayer = L.tileLayer(cfg.url, { attribution: cfg.attribution, maxZoom: 18, className: cfg.className }).addTo(map);
     tileLayer.bringToBack();
   }
 
